@@ -7,7 +7,7 @@ const openai = new OpenAI({
 });
 
 class OpenAIService {
-	async fetchThemeItem(theme) {
+	async fetchThemeItems(theme) {
 		try {
 			const completion = await openai.chat.completions.create({
 				messages: [
@@ -24,20 +24,25 @@ class OpenAIService {
 				model: "gpt-3.5-turbo",
 				response_format: { type: "json_object" },
 			});
-			// Parse the JSON-formatted content
 			const itemsStr = JSON.parse(completion.choices[0].message.content);
 
-			// Extract the array of items
 			const items = Object.values(itemsStr)[0];
 			console.log(`Items: ${items}`);
 
-			// Selecting a random item from the list
-			const selectedItem = items[Math.floor(Math.random() * items.length)];
-			console.log(`Selected item: ${selectedItem}`);
-
-			return selectedItem;
+			return items;
 		} catch (error) {
-			console.error("Error fetching theme item from OpenAI:", error);
+			console.error("Error fetching theme items from OpenAI:", error);
+			throw error;
+		}
+	}
+
+	async fetchThemeItem(items) {
+		try {
+			const item = items[Math.floor(Math.random() * items.length)];
+			console.log(`Selected item: ${item}`);
+			return item;
+		} catch (error) {
+			console.error("Error fetching theme item:", error);
 			throw error;
 		}
 	}
